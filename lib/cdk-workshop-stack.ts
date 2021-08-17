@@ -1,6 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as apigateway from '@aws-cdk/aws-apigateway';
+import { HitCounter } from './hit-counter';
 
 export class CdkWorkshopStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
@@ -14,8 +15,12 @@ export class CdkWorkshopStack extends cdk.Stack {
       handler: 'hello.handler',
     });
 
+    const helloHitCounter = new HitCounter(this, 'HelloHitCounter', {
+      downstream: helloLambda,
+    });
+
     new apigateway.LambdaRestApi(this, 'HelloEndpoint', {
-      handler: helloLambda,
+      handler: helloHitCounter.handler,
     });
   }
 }

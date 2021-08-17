@@ -23,7 +23,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     })
     .promise();
 
-  console.log(`downstream responose: `, JSON.stringify(resp, undefined, 2));
+  console.log(`downstream response: `, JSON.stringify(resp, undefined, 2));
 
   return JSON.parse(resp.Payload?.toString() || '');
 };
