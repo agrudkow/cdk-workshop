@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.118.0",
+    "@types/aws-lambda": "^8.10.82",
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
@@ -30,10 +31,14 @@
     "typescript": "~3.9.7"
   },
   "dependencies": {
+    "@aws-cdk/aws-apigateway": "^1.118.0",
+    "@aws-cdk/aws-dynamodb": "^1.118.0",
+    "@aws-cdk/aws-lambda": "^1.118.0",
     "@aws-cdk/aws-sns": "1.118.0",
     "@aws-cdk/aws-sns-subscriptions": "1.118.0",
     "@aws-cdk/aws-sqs": "1.118.0",
-    "@aws-cdk/core": "1.118.0"
+    "@aws-cdk/core": "1.118.0",
+    "aws-sdk": "^2.970.0"
   },
   "husky": {
     "hooks": {
