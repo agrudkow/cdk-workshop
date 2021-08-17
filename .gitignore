@@ -1,5 +1,6 @@
 *.js
 !jest.config.js
+!lambda/*.js
 !.prettierrc.js
 !.eslintrc.js
 *.d.ts
