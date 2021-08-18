@@ -1,12 +1,22 @@
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
+import { throws } from 'assert';
 
 export interface HitCounterProps {
   /**
    * the funditon for which we want to count the url hits
    */
   downstream: lambda.IFunction;
+
+  /**
+   * The read capacity units for the table
+   *
+   * Must be greater than 5 and lower than 20
+   *
+   * @default 5
+   */
+  readCapacity?: number;
 }
 
 export class HitCounter extends cdk.Construct {
@@ -14,11 +24,16 @@ export class HitCounter extends cdk.Construct {
   public readonly hitsTable: dynamodb.Table;
   public readonly hitsTableHitsCoulumnName: string = 'hits';
 
-  constructor(scope: cdk.Construct, id: string, { downstream }: HitCounterProps) {
+  constructor(scope: cdk.Construct, id: string, { downstream, readCapacity = 5 }: HitCounterProps) {
     super(scope, id);
 
+    // Validate readCapacity
+    this.validateReadCapacity(readCapacity)
+    
     this.hitsTable = new dynamodb.Table(this, 'Hits', {
       partitionKey: { name: 'path', type: dynamodb.AttributeType.STRING },
+      encryption: dynamodb.TableEncryption.AWS_MANAGED,
+      readCapacity: readCapacity,
     });
 
     this.handler = new lambda.Function(this, 'HitCounterHandler', {
@@ -28,7 +43,7 @@ export class HitCounter extends cdk.Construct {
       environment: {
         DOWNSTREAM_FUNCTION_NAME: downstream.functionName,
         HITS_TABLE_NAME: this.hitsTable.tableName,
-        HITS_TABLE_HITS_COLUMN_NAME: this.hitsTableHitsCoulumnName
+        HITS_TABLE_HITS_COLUMN_NAME: this.hitsTableHitsCoulumnName,
       },
     });
 
@@ -37,5 +52,10 @@ export class HitCounter extends cdk.Construct {
 
     // grant invoke persmissions
     downstream.grantInvoke(this.handler);
+  }
+
+  private validateReadCapacity = (readCapacity: number): void | never => {
+    if (readCapacity > 20 || readCapacity < 5)
+      throw new Error('readCapacity must be between 5 and 20 (inclusive)')
   }
 }
