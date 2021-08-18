@@ -59,3 +59,7 @@ export class HitCounter extends cdk.Construct {
       throw new Error('readCapacity must be between 5 and 20 (inclusive)')
   }
 }
+
+// api gateway -> lambda -> labda
+//                  .
+//                  dynamodb
