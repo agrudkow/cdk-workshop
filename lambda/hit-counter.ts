@@ -11,7 +11,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     .updateItem({
       TableName: process.env.HITS_TABLE_NAME as string,
       Key: { path: { S: event.path } },
-      UpdateExpression: 'ADD hits :incr',
+      UpdateExpression: `ADD ${process.env.HITS_TABLE_HITS_COLUMN_NAME} :incr`,
       ExpressionAttributeValues: { ':incr': { N: '1' } },
     })
     .promise();

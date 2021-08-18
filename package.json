@@ -38,7 +38,8 @@
     "@aws-cdk/aws-sns-subscriptions": "1.118.0",
     "@aws-cdk/aws-sqs": "1.118.0",
     "@aws-cdk/core": "1.118.0",
-    "aws-sdk": "^2.970.0"
+    "aws-sdk": "^2.970.0",
+    "cdk-dynamo-table-viewer": "^0.1.61"
   },
   "husky": {
     "hooks": {

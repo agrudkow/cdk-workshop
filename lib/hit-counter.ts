@@ -10,13 +10,14 @@ export interface HitCounterProps {
 }
 
 export class HitCounter extends cdk.Construct {
-  /** alows accessing the coutner funciton */
-  public readonly handler: lambda.IFunction;
+  public readonly handler: lambda.Function;
+  public readonly hitsTable: dynamodb.Table;
+  public readonly hitsTableHitsCoulumnName: string = 'hits';
 
   constructor(scope: cdk.Construct, id: string, { downstream }: HitCounterProps) {
     super(scope, id);
 
-    const hitsTable = new dynamodb.Table(this, 'Hits', {
+    this.hitsTable = new dynamodb.Table(this, 'Hits', {
       partitionKey: { name: 'path', type: dynamodb.AttributeType.STRING },
     });
 
@@ -26,12 +27,13 @@ export class HitCounter extends cdk.Construct {
       code: lambda.Code.fromAsset('lambda', { exclude: ['*.ts'] }),
       environment: {
         DOWNSTREAM_FUNCTION_NAME: downstream.functionName,
-        HITS_TABLE_NAME: hitsTable.tableName,
+        HITS_TABLE_NAME: this.hitsTable.tableName,
+        HITS_TABLE_HITS_COLUMN_NAME: this.hitsTableHitsCoulumnName
       },
     });
 
     // grant read/write persmissions for table Hits for lambda func
-    hitsTable.grantWriteData(this.handler);
+    this.hitsTable.grantWriteData(this.handler);
 
     // grant invoke persmissions
     downstream.grantInvoke(this.handler);
